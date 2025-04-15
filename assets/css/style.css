@@ -1,72 +1,72 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    height: 100vh;
-    display: grid;
-    place-items: center;
-    background: linear-gradient(to bottom, #aaaaaa, #eeeeee);
-    font-family: 'Lato', sans-serif;
-  }
-  
-  /* Conteneur de la roue */
-  #spin_the_wheel {
-    display: inline-block;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  /* La roue s'affiche en bloc */
-  #wheel {
-    display: block;
-  }
-  
-  /* Bouton central pour lancer le spin */
-  #spin {
-    font: 1.5em/0 "Lato", sans-serif;
-    user-select: none;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 30%;
-    height: 30%;
-    margin: -15%; /* Centrage */
-    background: #fff;
-    color: #fff;
-    box-shadow:
-      0 0 0 8px currentColor,
-      0 0px 15px 5px rgba(0, 0, 0, 0.6);
-    border-radius: 50%;
-    transition: 0.8s;
-  }
-  
-  #spin::after {
-    content: "";
-    position: absolute;
-    top: -17px;
-    border: 10px solid transparent;
-    border-bottom-color: currentColor;
-    border-top: none;
-  }
-  
-  /* Quelques classes utilitaires */
-  .row {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: 100%;
-  }
-  
-  .column {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
-  
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(to bottom, #aaaaaa, #eeeeee);
+  font-family: 'Lato', sans-serif;
+}
+
+#spin_the_wheel {
+  position: relative;
+  width: 450px;
+  height: 450px;
+}
+
+#wheel {
+  position: relative;
+  width: 450px;
+  height: 450px;
+  margin: auto;
+}
+
+#spin {
+  font: bold 1.5em "Lato", sans-serif;
+  user-select: none;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120px;
+  height: 120px;
+  margin-left: -60px;
+  margin-top: -60px;
+  background: #ffffff;
+  color: #333333;
+  border-radius: 50%;
+  box-shadow: 0 0 0 6px currentColor, 0 0px 10px 4px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: 0.3s ease;
+  z-index: 10;
+}
+
+#spin::after {
+  content: "";
+  position: absolute;
+  top: -15px;
+  border: 8px solid transparent;
+  border-bottom-color: currentColor;
+  border-top: none;
+}
+
+/* Résultat affiché au centre de la roue */
+#result {
+  position: absolute;
+  top: 70%; /* légèrement plus bas que SPIN pour visibilité */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5em;
+  font-weight: bold;
+  color: yellow;
+  pointer-events: none;
+  z-index: 11;
+  text-shadow: 2px 2px 4px #000;
+}
