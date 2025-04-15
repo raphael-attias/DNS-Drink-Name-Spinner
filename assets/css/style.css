@@ -1,30 +1,182 @@
+/* Reset des styles par défaut */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* Style de base du body */
 body {
-  height: 100vh;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(to bottom, #aaaaaa, #eeeeee);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
   font-family: 'Lato', sans-serif;
+  color: #333;
+  padding: 20px;
 }
 
+/* Conteneur principal avec flex */
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  max-width: 1200px;
+}
+
+/* Style du conteneur de titre */
+.title-container {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* Style du titre principal */
+.title {
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  background: #0083FA;
+  padding: 10px 30px;
+  border-radius: 50px;
+  display: inline-block;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 0 5px rgba(255, 255, 255, 0.5);
+  animation: glow 3s infinite alternate;
+}
+
+/* Animation de lueur pour le titre */
+@keyframes glow {
+  0% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 0 5px rgba(255, 255, 255, 0.5); }
+  100% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 0 5px rgba(255, 255, 255, 0.5), 0 0 20px #0083FA; }
+}
+
+/* Style du conteneur d'instructions */
+.instructions-container {
+  flex: 0 0 250px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 74, 173, 0.3);
+  max-height: 450px;
+  position: relative;
+
+  /* Styles imbriqués (à convertir en CSS standard) */
+  h2 {
+    margin: 40px 0 10px 0;
+  }
+
+  img {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    right: 39px;
+    top: -100px;
+    height: 170px;
+  }
+}
+
+/* Style du titre des instructions */
+.instructions-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #0083FA;
+  text-align: center;
+  border-bottom: 2px solid #0083FA;
+  padding-bottom: 8px;
+}
+
+/* Style du contenu des instructions */
+.instructions-content {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Style de la liste dans les instructions */
+.instructions-content ul {
+  padding-left: 20px;
+  margin: 10px 0;
+}
+
+.instructions-content li {
+  margin-bottom: 8px;
+}
+
+/* Style du conteneur de la roue */
 #spin_the_wheel {
   position: relative;
   width: 450px;
   height: 450px;
+  filter: drop-shadow(0 15px 15px rgba(0, 0, 0, 0.3));
 }
 
+/* Animation de flottement */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Style du canvas de la roue */
 #wheel {
   position: relative;
   width: 450px;
   height: 450px;
+  border-radius: 50%;
   margin: auto;
+  border: 12px solid #0083FA;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.7), 0 5px 30px rgba(0, 0, 0, 0.5), inset 0 0 40px rgba(0, 0, 0, 0.2);
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8) 0%, rgba(200, 200, 255, 0.6) 30%, rgba(100, 140, 255, 0.4) 70%);
+  overflow: hidden;
 }
 
+/* Effet de cercle lumineux autour de la roue */
+#wheel::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  z-index: -1;
+  border-radius: 50%;
+  background: transparent;
+  border: 4px dotted rgba(255, 255, 255, 0.7);
+  animation: rotate 30s linear infinite;
+  pointer-events: none;
+  box-shadow: 0 0 20px rgba(0, 74, 173, 0.6);
+}
+
+/* Effet d'éclat sur la roue */
+#wheel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.3) 100%);
+  animation: shine 4s infinite;
+  pointer-events: none;
+}
+
+/* Animations pour les effets de la roue */
+@keyframes shine {
+  0% { opacity: 0.2; transform: rotate(0deg); }
+  50% { opacity: 0.7; }
+  100% { opacity: 0.2; transform: rotate(360deg); }
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Style du bouton SPIN */
 #spin {
   font: bold 1.5em "Lato", sans-serif;
   user-select: none;
@@ -37,36 +189,102 @@ body {
   margin-left: -60px;
   margin-top: -60px;
   background: #ffffff;
-  color: #333333;
+  color: #0083FA;
   border-radius: 50%;
-  box-shadow: 0 0 0 6px currentColor, 0 0px 10px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 6px #0083FA, 0 0 0 10px rgba(255, 255, 255, 0.5), 0 5px 15px rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
   transition: 0.3s ease;
+  text-transform: uppercase;
   z-index: 10;
 }
 
+/* Effets au survol et au clic du bouton */
+#spin:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 6px #0083FA, 0 0 0 10px rgba(255, 255, 255, 0.9), 0 8px 25px rgba(0, 0, 0, 0.6);
+}
+
+#spin:active {
+  transform: scale(0.95);
+}
+
+/* Flèche au-dessus du bouton */
 #spin::after {
   content: "";
   position: absolute;
   top: -15px;
   border: 8px solid transparent;
-  border-bottom-color: currentColor;
+  border-bottom-color: #0083FA;
   border-top: none;
 }
 
-/* Résultat affiché au centre de la roue */
+/* Effet de pulsation autour du bouton */
+#spin::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid rgba(0, 74, 173, 0.3);
+  animation: pulse 2s infinite;
+}
+
+/* Animation de pulsation */
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Style de l'affichage du résultat */
 #result {
   position: absolute;
-  top: 70%; /* légèrement plus bas que SPIN pour visibilité */
+  top: 70%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 1.5em;
   font-weight: bold;
-  color: yellow;
+  color: white;
   pointer-events: none;
   z-index: 11;
-  text-shadow: 2px 2px 4px #000;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7), 0 0 10px rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+}
+
+/* Design responsive */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .instructions-container {
+    order: 3;
+    margin-top: 20px;
+    flex: 0 0 auto;
+    width: 90%;
+    max-width: 450px;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+  }
+}
+
+/* Ajustements pour petits écrans */
+@media (max-width: 500px) {
+  #spin_the_wheel, #wheel {
+    width: 350px;
+    height: 350px;
+  }
+  
+  .title {
+    font-size: 2rem;
+    padding: 8px 20px;
+  }
 }
