@@ -37,7 +37,7 @@ body {
   margin-left: -60px;
   margin-top: -60px;
   background: #ffffff;
-  color: #333333;
+  color: #004aad;
   border-radius: 50%;
   box-shadow: 0 0 0 6px currentColor, 0 0px 10px 4px rgba(0, 0, 0, 0.5);
   display: flex;
@@ -65,7 +65,7 @@ body {
   transform: translate(-50%, -50%);
   font-size: 1.5em;
   font-weight: bold;
-  color: yellow;
+  color: gray;
   pointer-events: none;
   z-index: 11;
   text-shadow: 2px 2px 4px #000;

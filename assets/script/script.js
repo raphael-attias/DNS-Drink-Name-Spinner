@@ -1,5 +1,5 @@
 const sectors = [
-  { label: "Perdu", chance: 92, color: "#7F8C8D", text: "#FFFFFF" },
+  { label: "Perdu", chance: 92, color: "#333", text: "#FFFFFF" },
   { label: "Soda", chance: 6, color: "#FF5A10", text: "#333333" },
   { label: "Barre Choco", chance: 2, color: "#FFBC03", text: "#333333" },
 ];
