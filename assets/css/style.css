@@ -65,20 +65,20 @@ body {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 74, 173, 0.3);
   max-height: 450px;
   position: relative;
+}
 
-  /* Styles imbriqués (à convertir en CSS standard) */
-  h2 {
-    margin: 40px 0 10px 0;
-  }
+/* Styles pour les éléments à l'intérieur du conteneur d'instructions */
+.instructions-container h2 {
+  margin: 40px 0 10px 0;
+}
 
-  img {
-    display: flex;
-    justify-content: center;
-    position: absolute;
-    right: 39px;
-    top: -100px;
-    height: 170px;
-  }
+.instructions-container img {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  right: 39px;
+  top: -100px;
+  height: 170px;
 }
 
 /* Style du titre des instructions */
@@ -140,28 +140,31 @@ body {
 #wheel::before {
   content: "";
   position: absolute;
-  top: -10px;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
-  z-index: -1;
-  border-radius: 50%;
-  background: transparent;
-  border: 4px dotted rgba(255, 255, 255, 0.7);
-  animation: rotate 30s linear infinite;
-  pointer-events: none;
-  box-shadow: 0 0 20px rgba(0, 74, 173, 0.6);
-}
-
-/* Effet d'éclat sur la roue */
-#wheel::after {
-  content: "";
-  position: absolute;
   inset: 0;
   border-radius: 50%;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.3) 100%);
   animation: shine 4s infinite;
   pointer-events: none;
+}
+
+/* Supprimer l'ancienne flèche */
+#spin::after {
+  content: none;
+}
+
+/* Ajouter une nouvelle flèche au conteneur spin_the_wheel */
+#spin_the_wheel::before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: 7px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 30px solid #0083FA;
+  z-index: 15;
 }
 
 /* Animations pour les effets de la roue */
@@ -201,6 +204,11 @@ body {
   z-index: 10;
 }
 
+/* Suppression de la flèche en bas */
+#spin::after {
+  content: none;
+}
+
 /* Effets au survol et au clic du bouton */
 #spin:hover {
   transform: scale(1.05);
@@ -209,16 +217,6 @@ body {
 
 #spin:active {
   transform: scale(0.95);
-}
-
-/* Flèche au-dessus du bouton */
-#spin::after {
-  content: "";
-  position: absolute;
-  top: -15px;
-  border: 8px solid transparent;
-  border-bottom-color: #0083FA;
-  border-top: none;
 }
 
 /* Effet de pulsation autour du bouton */
