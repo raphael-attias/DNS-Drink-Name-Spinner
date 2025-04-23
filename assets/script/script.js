@@ -1,8 +1,8 @@
 // Configuration des secteurs de la roue
 const sectors = [
-  { label: "Perdu", chance: 92, color: "#333", text: "#FFFFFF" },
-  { label: "Soda", chance: 6, color: "#FF5A10", text: "#333333" },
-  { label: "Barre Choco", chance: 2, color: "#FFBC03", text: "#333333" },
+  { label: "Perdu", chance: 90, color: "#333", text: "#FFFFFF" },
+  { label: "Soda", chance: 5, color: "#FF5A10", text: "#333333" },
+  { label: "Barre Choco", chance: 5, color: "#FFBC03", text: "#333333" },
 ];
 
 // Constantes et sélecteurs d'éléments
