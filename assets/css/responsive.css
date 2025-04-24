@@ -1,0 +1,95 @@
+/* Responsive tablette */
+@media (max-width: 900px) {
+    .container {
+      flex-direction: row-reverse;
+      justify-content: center;
+      gap: 20px;
+    }
+    
+    .instructions-container {
+      margin-top: 0;
+      flex: 0 0 auto;
+      width: 250px;
+      max-width: 250px;
+      order: 1;
+    }
+    
+    .title {
+      font-size: 2.5rem;
+    }
+  
+    #spin_the_wheel, #wheel {
+      width: 380px;
+      height: 380px;
+    }
+  }
+  
+  /* Responsive mobile */
+  @media (max-width: 767px) {
+    .container {
+      flex-direction: column;
+      width: 100%;
+      padding: 5px;
+    }
+    
+    .instructions-container {
+      order: 1;
+      margin-top: 50px;
+      width: 90%;
+      max-width: 350px;
+    }
+    
+    #spin_the_wheel {
+      order: 2;
+      margin-top: 20px;
+      width: 90%;
+      max-width: 320px;
+      height: auto;
+      aspect-ratio: 1/1;
+    }
+    
+    #wheel {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1/1;
+    }
+    
+    /* Ajuster la position de l'image logo dans les instructions pour mobile */
+    .instructions-container img {
+      right: 50%;
+      transform: translateX(50%);
+      top: -90px;
+      height: 130px;
+    }
+  }
+  
+  /* Ajustements supplémentaires pour les très petits écrans */
+  @media (max-width: 425px) {
+    html, body {
+        height: 100vh;
+        width: auto;
+    }
+
+    .instructions-container img {
+        top: -70px;
+    }
+
+    #spin_the_wheel {
+      width: 90%;
+      max-width: 280px;
+    }
+
+    #spin_the_wheel::before {
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-top: 20px solid #0083FA;;
+      }
+    
+    #spin {
+      width: 70px;
+      height: 70px;
+      margin-left: -35px;
+      margin-top: -35px;
+      font-size: 1.3em;
+    }
+  }
