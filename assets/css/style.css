@@ -8,6 +8,7 @@
 /* Style de base du body */
 body {
   min-height: 100vh;
+  width: auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,6 +16,8 @@ body {
   font-family: 'Lato', sans-serif;
   color: #333;
   padding: 20px;
+  margin: 0;
+  overflow-x: hidden;
 }
 
 /* Conteneur principal avec flex */
@@ -23,8 +26,11 @@ body {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  flex-direction: row-reverse;
   gap: 30px;
   max-width: 1200px;
+  width: 100%;
+  padding: 10px;
 }
 
 /* Style du conteneur de titre */
@@ -253,36 +259,4 @@ body {
   z-index: 11;
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7), 0 0 10px rgba(255, 255, 255, 0.5);
   transition: all 0.3s ease;
-}
-
-/* Design responsive */
-@media (max-width: 900px) {
-  .container {
-    flex-direction: column;
-  }
-  
-  .instructions-container {
-    order: 3;
-    margin-top: 20px;
-    flex: 0 0 auto;
-    width: 90%;
-    max-width: 450px;
-  }
-  
-  .title {
-    font-size: 2.5rem;
-  }
-}
-
-/* Ajustements pour petits écrans */
-@media (max-width: 500px) {
-  #spin_the_wheel, #wheel {
-    width: 350px;
-    height: 350px;
-  }
-  
-  .title {
-    font-size: 2rem;
-    padding: 8px 20px;
-  }
 }
