@@ -2,11 +2,11 @@
 const sectors = [
   { label: "Perdu", chance: 97.5, color: "#333", text: "#FFFFFF" },
   { label: "Soda", chance: 1, color: "#6e8efb", text: "#333333" },
-  { label: "Barre Choco ou 1 Frite !", chance: 0.5, color: "#a777e3", text: "#333333" },
+  { label: "Barre Choco", chance: 0.5, color: "#a777e3", text: "#333333" },
+  { label: "1 Frite !", chance: 1, color: "#FF9800", text: "#333333" }, // Changé la couleur pour différencier
 ];
 
 // Constantes et sélecteurs d'éléments
-const totalChance = sectors.reduce((sum, s) => sum + s.chance, 0);
 const canvas = document.querySelector("#wheel");
 const ctx = canvas.getContext("2d");
 const dia = canvas.width;
@@ -29,6 +29,51 @@ let confetti = [];
 let confettiActive = false;
 
 /**
+ * Réorganise les secteurs pour avoir un design triangulaire pour les prix
+ */
+function getWheelDesign() {
+  // Extraire le secteur "Perdu" et les secteurs de prix
+  const losingSection = sectors.find(s => s.label === "Perdu");
+  const prizesSections = sectors.filter(s => s.label !== "Perdu");
+  
+  // Réorganiser la distribution sur la roue
+  // On va créer un design où les prix sont des triangles plus petits
+  const triangleAngle = TAU / 16; // Angle pour chaque triangle de prix (1/16 du cercle)
+  
+  // Calcul des positions angulaires
+  const wheelSections = [];
+  let currentAngle = 0;
+  
+  // Ajouter les secteurs de prix à intervalles réguliers
+  for (let i = 0; i < prizesSections.length; i++) {
+    const prizeSection = prizesSections[i];
+    wheelSections.push({
+      ...prizeSection,
+      startAngle: currentAngle,
+      endAngle: currentAngle + triangleAngle,
+      isTriangle: true
+    });
+    
+    // Ajouter un secteur "Perdu" entre chaque prix
+    const segmentBetweenPrizes = (i === prizesSections.length - 1) 
+      ? TAU - (currentAngle + triangleAngle) // Dernier segment va jusqu'à la fin du cercle
+      : (TAU / prizesSections.length) - triangleAngle; // Répartition égale entre les prix
+    
+    wheelSections.push({
+      ...losingSection,
+      startAngle: currentAngle + triangleAngle,
+      endAngle: currentAngle + triangleAngle + segmentBetweenPrizes,
+      isTriangle: false
+    });
+    
+    // Mettre à jour l'angle actuel pour le prochain secteur
+    currentAngle += triangleAngle + segmentBetweenPrizes;
+  }
+  
+  return wheelSections;
+}
+
+/**
  * Dessine la roue avec tous ses secteurs
  */
 function drawWheel() {
@@ -40,19 +85,16 @@ function drawWheel() {
   ctx.arc(rad, rad, rad, 0, TAU);
   ctx.fill();
   
-  // Calculer l'angle de chaque secteur
-  const sectorAngles = calculateSectorAngles();
+  // Obtenir la disposition des secteurs
+  const wheelSections = getWheelDesign();
   
   // Dessiner chaque secteur
-  let startAngle = 0;
-  sectors.forEach((sector, index) => {
-    const arc = sectorAngles[index];
-    
+  wheelSections.forEach(section => {
     // Dessiner le secteur
     ctx.beginPath();
-    ctx.fillStyle = sector.color;
+    ctx.fillStyle = section.color;
     ctx.moveTo(rad, rad);
-    ctx.arc(rad, rad, rad, startAngle, startAngle + arc);
+    ctx.arc(rad, rad, rad, section.startAngle, section.endAngle);
     ctx.lineTo(rad, rad);
     ctx.fill();
     
@@ -61,42 +103,51 @@ function drawWheel() {
     ctx.lineWidth = 2;
     ctx.strokeStyle = "#FFFFFF";
     ctx.moveTo(rad, rad);
-    ctx.arc(rad, rad, rad, startAngle, startAngle + arc);
+    ctx.arc(rad, rad, rad, section.startAngle, section.endAngle);
     ctx.lineTo(rad, rad);
     ctx.stroke();
     
     // Ajouter le texte du secteur
-    drawSectorText(sector.label, sector.text, startAngle, arc);
-    
-    startAngle += arc;
+    drawSectorText(section);
   });
-}
-
-/**
- * Calcule l'angle de chaque secteur en fonction de sa chance
- */
-function calculateSectorAngles() {
-  return sectors.map(sector => TAU * (sector.chance / totalChance));
 }
 
 /**
  * Dessine le texte dans un secteur
  */
-function drawSectorText(label, textColor, startAngle, arc) {
+function drawSectorText(section) {
+  const centerAngle = (section.startAngle + section.endAngle) / 2;
+  const arcSize = section.endAngle - section.startAngle;
+  
   ctx.save();
   ctx.translate(rad, rad);
-  ctx.rotate(startAngle + arc / 2);
+  ctx.rotate(centerAngle);
   
   // Paramètres du texte
-  ctx.textAlign = "right";
-  ctx.fillStyle = textColor;
-  ctx.font = "bold 20px 'Lato', sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillStyle = section.text;
   
-  // Calculer la distance du texte par rapport au centre
-  const textDistance = rad * 0.75;
+  // Adapter la taille du texte selon le type de secteur
+  if (section.isTriangle) {
+    ctx.font = "bold 16px 'Lato', sans-serif";
+    
+    // Pour les triangles, le texte doit être placé plus près du bord
+    // et orienté vers le centre
+    ctx.textAlign = "right";
+    ctx.fillText(section.label, rad * 0.85, 0);
+  } else {
+    // Pour le secteur "Perdu", la taille du texte dépend de l'arc
+    const fontSize = Math.min(20, Math.max(12, arcSize * 10));
+    ctx.font = `bold ${fontSize}px 'Lato', sans-serif`;
+    
+    // Placer le texte "Perdu" à mi-chemin entre le centre et le bord
+    // seulement s'il y a assez d'espace
+    if (arcSize > 0.4) {
+      ctx.textAlign = "center";
+      ctx.fillText(section.label, rad * 0.5, 0);
+    }
+  }
   
-  // Dessiner le texte
-  ctx.fillText(label, textDistance, 8);
   ctx.restore();
 }
 
@@ -104,6 +155,7 @@ function drawSectorText(label, textColor, startAngle, arc) {
  * Sélectionne un secteur basé sur les probabilités
  */
 function pickSector() {
+  const totalChance = sectors.reduce((sum, s) => sum + s.chance, 0);
   const rand = Math.random() * totalChance;
   let accumulator = 0;
   
@@ -113,27 +165,49 @@ function pickSector() {
   }
   
   // Fallback - ne devrait jamais arriver avec un calcul correct
-  return sectors[sectors.length - 1];
+  return sectors[0];
+}
+
+/**
+ * Trouve un secteur correspondant à l'étiquette donnée
+ */
+function getSectorByLabel(label) {
+  const wheelSections = getWheelDesign();
+  return wheelSections.find(section => section.label === label);
 }
 
 /**
  * Calcule l'angle cible pour un secteur donné
  */
 function getTargetAngle(sector) {
-  const sectorAngles = calculateSectorAngles();
-  const sectorIndex = sectors.indexOf(sector);
+  // Trouver le secteur correspondant dans notre design de roue
+  const wheelSection = getSectorByLabel(sector.label);
   
-  // Calculer l'angle de départ du secteur
-  let startAngle = 0;
-  for (let i = 0; i < sectorIndex; i++) {
-    startAngle += sectorAngles[i];
-  }
+  if (!wheelSection) return 0;
   
-  // Ajouter un décalage aléatoire à l'intérieur du secteur
-  const randomOffset = Math.random() * sectorAngles[sectorIndex] * 0.8;
+  // Calculer un angle aléatoire dans le secteur cible
+  const sectionSize = wheelSection.endAngle - wheelSection.startAngle;
+  const randomOffset = Math.random() * sectionSize * 0.8;
   
   // L'angle cible est l'angle de départ + un décalage
-  return startAngle + randomOffset;
+  return wheelSection.startAngle + randomOffset;
+}
+
+/**
+ * Trouve le secteur correspondant à l'angle donné
+ */
+function getSectorAtAngle(angle) {
+  const wheelSections = getWheelDesign();
+  const normalizedAngle = angle % TAU;
+  
+  for (const section of wheelSections) {
+    if (normalizedAngle >= section.startAngle && normalizedAngle < section.endAngle) {
+      return section;
+    }
+  }
+  
+  // Fallback au premier secteur
+  return wheelSections[0];
 }
 
 /**
@@ -168,7 +242,7 @@ function createConfettiCanvas() {
  * Génère des confettis aléatoires
  */
 function generateConfetti(count) {
-  const colors = ['#FF5A10', '#FFBC03', '#004aad', '#00B74A', '#9C27B0', '#F44336', '#3F51B5'];
+  const colors = ['#6e8efb', '#a777e3', '#FF9800', '#00B74A', '#9C27B0', '#F44336', '#3F51B5'];
   const confetti = [];
   
   for (let i = 0; i < count; i++) {
@@ -196,7 +270,28 @@ function drawConfetti(ctx, confetti) {
   ctx.rotate(confetti.rotation * Math.PI / 180);
   
   ctx.fillStyle = confetti.color;
-  ctx.fillRect(-confetti.size / 2, -confetti.size / 2, confetti.size, confetti.size);
+  
+  // Variété de formes pour les confettis
+  const shapeType = Math.floor(Math.random() * 3);
+  
+  switch (shapeType % 3) {
+    case 0: // Carré
+      ctx.fillRect(-confetti.size / 2, -confetti.size / 2, confetti.size, confetti.size);
+      break;
+    case 1: // Cercle
+      ctx.beginPath();
+      ctx.arc(0, 0, confetti.size / 2, 0, TAU);
+      ctx.fill();
+      break;
+    case 2: // Triangle
+      ctx.beginPath();
+      ctx.moveTo(-confetti.size / 2, confetti.size / 2);
+      ctx.lineTo(confetti.size / 2, confetti.size / 2);
+      ctx.lineTo(0, -confetti.size / 2);
+      ctx.closePath();
+      ctx.fill();
+      break;
+  }
   
   ctx.restore();
 }
@@ -303,7 +398,7 @@ function frame() {
       
       // Déterminer le résultat
       const pointerAngle = (TAU - (ang % TAU)) % TAU;
-      const result = getResultFromAngle(pointerAngle);
+      const result = getSectorAtAngle(pointerAngle);
       
       // Afficher le résultat
       resultEl.textContent = result.label;
@@ -317,23 +412,6 @@ function frame() {
   }
   
   requestAnimationFrame(frame);
-}
-
-/**
- * Détermine le secteur sur lequel la roue s'est arrêtée
- */
-function getResultFromAngle(pointerAngle) {
-  const sectorAngles = calculateSectorAngles();
-  let currentAngle = 0;
-  
-  for (let i = 0; i < sectors.length; i++) {
-    currentAngle += sectorAngles[i];
-    if (pointerAngle < currentAngle) {
-      return sectors[i];
-    }
-  }
-  
-  return sectors[0];
 }
 
 /**
