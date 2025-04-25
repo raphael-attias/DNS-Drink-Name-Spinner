@@ -51,7 +51,7 @@ function getWheelDesign() {
       isTriangle: true
     });
     
-    // Ajouts d'un secteur "Perdu" entre chaque prix
+    // Ajout d'un secteur "Perdu" entre chaque prix
     const segmentBetweenPrizes = (i === prizesSections.length - 1) 
       ? TAU - (currentAngle + triangleAngle) // Dernier segment va jusqu'à la fin du cercle
       : (TAU / prizesSections.length) - triangleAngle; // Répartition égale entre les prix
