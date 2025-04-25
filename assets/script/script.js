@@ -3,7 +3,7 @@ const sectors = [
   { label: "Perdu", chance: 97.5, color: "#333", text: "#FFFFFF" },
   { label: "Soda", chance: 1, color: "#6e8efb", text: "#333333" },
   { label: "Barre Choco", chance: 0.5, color: "#a777e3", text: "#333333" },
-  { label: "1 Frite !", chance: 1, color: "#FF9800", text: "#333333" }, // Changé la couleur pour différencier
+  { label: "1 Frite !", chance: 1, color: "#FF9800", text: "#333333" },
 ];
 
 // Constantes et sélecteurs d'éléments
@@ -35,16 +35,13 @@ function getWheelDesign() {
   // Extraire le secteur "Perdu" et les secteurs de prix
   const losingSection = sectors.find(s => s.label === "Perdu");
   const prizesSections = sectors.filter(s => s.label !== "Perdu");
-  
-  // Réorganiser la distribution sur la roue
-  // On va créer un design où les prix sont des triangles plus petits
   const triangleAngle = TAU / 16; // Angle pour chaque triangle de prix (1/16 du cercle)
   
   // Calcul des positions angulaires
   const wheelSections = [];
   let currentAngle = 0;
   
-  // Ajouter les secteurs de prix à intervalles réguliers
+  // Ajouts des secteurs de prix à intervalles réguliers
   for (let i = 0; i < prizesSections.length; i++) {
     const prizeSection = prizesSections[i];
     wheelSections.push({
@@ -54,7 +51,7 @@ function getWheelDesign() {
       isTriangle: true
     });
     
-    // Ajouter un secteur "Perdu" entre chaque prix
+    // Ajout d'un secteur "Perdu" entre chaque prix
     const segmentBetweenPrizes = (i === prizesSections.length - 1) 
       ? TAU - (currentAngle + triangleAngle) // Dernier segment va jusqu'à la fin du cercle
       : (TAU / prizesSections.length) - triangleAngle; // Répartition égale entre les prix
@@ -66,7 +63,7 @@ function getWheelDesign() {
       isTriangle: false
     });
     
-    // Mettre à jour l'angle actuel pour le prochain secteur
+    // Mise à jour de l'angle actuel pour le prochain secteur
     currentAngle += triangleAngle + segmentBetweenPrizes;
   }
   
@@ -79,7 +76,7 @@ function getWheelDesign() {
 function drawWheel() {
   ctx.clearRect(0, 0, dia, dia);
   
-  // Dessiner un cercle de fond
+  // Dessine un cercle de fond
   ctx.beginPath();
   ctx.fillStyle = "#FFFFFF";
   ctx.arc(rad, rad, rad, 0, TAU);
@@ -88,9 +85,9 @@ function drawWheel() {
   // Obtenir la disposition des secteurs
   const wheelSections = getWheelDesign();
   
-  // Dessiner chaque secteur
+  // Dessine chaque secteur
   wheelSections.forEach(section => {
-    // Dessiner le secteur
+    // Dessine le secteur
     ctx.beginPath();
     ctx.fillStyle = section.color;
     ctx.moveTo(rad, rad);
@@ -98,7 +95,7 @@ function drawWheel() {
     ctx.lineTo(rad, rad);
     ctx.fill();
     
-    // Ajouter une bordure entre les secteurs
+    // Ajout d'une bordure entre les secteurs
     ctx.beginPath();
     ctx.lineWidth = 2;
     ctx.strokeStyle = "#FFFFFF";
@@ -107,7 +104,7 @@ function drawWheel() {
     ctx.lineTo(rad, rad);
     ctx.stroke();
     
-    // Ajouter le texte du secteur
+    // Ajout du texte du secteur
     drawSectorText(section);
   });
 }
@@ -127,7 +124,7 @@ function drawSectorText(section) {
   ctx.textAlign = "center";
   ctx.fillStyle = section.text;
   
-  // Adapter la taille du texte selon le type de secteur
+  // Adapte la taille du texte selon le type de secteur
   if (section.isTriangle) {
     ctx.font = "bold 16px 'Lato', sans-serif";
     
