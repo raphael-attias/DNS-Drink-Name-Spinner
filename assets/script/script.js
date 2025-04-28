@@ -1,9 +1,9 @@
 // Configuration des secteurs de la roue
 const sectors = [
-  { label: "Perdu", chance: 99.7, color: "#333", text: "#FFFFFF" },
-  { label: "Soda", chance: 0.1, color: "#6e8efb", text: "#333333" },
-  { label: "Barre Choco", chance: 0.1, color: "#a777e3", text: "#333333" },
-  { label: "1 Frite !", chance: 0.1, color: "#FF9800", text: "#333333" },
+  { label: "Perdu", chance: 1, color: "#333", text: "#FFFFFF" },     // 25%
+  { label: "Soda", chance: 1, color: "#6e8efb", text: "#333333" },   // 25%
+  { label: "Barre Choco", chance: 1, color: "#a777e3", text: "#333333" }, // 25%
+  { label: "1 Frite !", chance: 1, color: "#FF9800", text: "#333333" },  // 25%
 ];
 
 // Constantes et sélecteurs d'éléments
@@ -20,8 +20,8 @@ const resultEl = document.querySelector("#result");
 let ang = 0;
 let angVel = 0;
 let isSpinning = false;
-const friction = 0.991;
-const minSpinTime = 3000; // Temps minimum de rotation en ms
+const friction = 0.975;
+const minSpinTime = 1099; // Temps minimum de rotation en ms
 let spinStartTime = 0;
 
 // Variables pour les confettis
@@ -32,44 +32,44 @@ let confettiActive = false;
  * Réorganise les secteurs pour avoir un design triangulaire pour les prix
  */
 function getWheelDesign() {
-  // Extraire le secteur "Perdu" et les secteurs de prix
+  const totalPrizes = sectors.length - 1;
+  const totalPerduPercentage = 92;
+  const prizePercentage = (100 - totalPerduPercentage) / totalPrizes;
+
   const losingSection = sectors.find(s => s.label === "Perdu");
   const prizesSections = sectors.filter(s => s.label !== "Perdu");
-  const triangleAngle = TAU / 16; // Angle pour chaque triangle de prix (1/16 du cercle)
-  
-  // Calcul des positions angulaires
+
   const wheelSections = [];
   let currentAngle = 0;
   
-  // Ajouts des secteurs de prix à intervalles réguliers
-  for (let i = 0; i < prizesSections.length; i++) {
-    const prizeSection = prizesSections[i];
+  // Calcul des angles proportionnels
+  const prizeAngle = (TAU * prizePercentage) / 100;
+  const perduAngle = (TAU * totalPerduPercentage) / 100 / totalPrizes;
+
+  prizesSections.forEach(prize => {
+    // Secteur de prix
     wheelSections.push({
-      ...prizeSection,
+      ...prize,
       startAngle: currentAngle,
-      endAngle: currentAngle + triangleAngle,
+      endAngle: currentAngle + prizeAngle,
       isTriangle: true
     });
     
-    // Ajout d'un secteur "Perdu" entre chaque prix
-    const segmentBetweenPrizes = (i === prizesSections.length - 1) 
-      ? TAU - (currentAngle + triangleAngle) // Dernier segment va jusqu'à la fin du cercle
-      : (TAU / prizesSections.length) - triangleAngle; // Répartition égale entre les prix
+    currentAngle += prizeAngle;
     
+    // Secteur Perdu suivant
     wheelSections.push({
       ...losingSection,
-      startAngle: currentAngle + triangleAngle,
-      endAngle: currentAngle + triangleAngle + segmentBetweenPrizes,
+      startAngle: currentAngle,
+      endAngle: currentAngle + perduAngle,
       isTriangle: false
     });
     
-    // Mise à jour de l'angle actuel pour le prochain secteur
-    currentAngle += triangleAngle + segmentBetweenPrizes;
-  }
-  
+    currentAngle += perduAngle;
+  });
+
   return wheelSections;
 }
-
 /**
  * Dessine la roue avec tous ses secteurs
  */
@@ -152,42 +152,42 @@ function drawSectorText(section) {
  * Sélectionne un secteur basé sur les probabilités
  */
 function pickSector() {
-  const totalChance = sectors.reduce((sum, s) => sum + s.chance, 0);
-  const rand = Math.random() * totalChance;
-  let accumulator = 0;
+  // Sélection aléatoire basée sur la surface réelle des secteurs
+  const wheelSections = getWheelDesign();
+  const randomAngle = Math.random() * TAU;
   
-  for (const sector of sectors) {
-    accumulator += sector.chance;
-    if (rand <= accumulator) return sector;
-  }
-  
-  // Fallback - ne devrait jamais arriver avec un calcul correct
-  return sectors[0];
+  return wheelSections.find(section => 
+    randomAngle >= section.startAngle && 
+    randomAngle < section.endAngle
+  );
 }
 
 /**
- * Trouve un secteur correspondant à l'étiquette donnée
+ * Trouve tous les secteurs visuels correspondant à l'étiquette donnée
  */
-function getSectorByLabel(label) {
+function getSectorsByLabel(label) {
   const wheelSections = getWheelDesign();
-  return wheelSections.find(section => section.label === label);
+  return wheelSections.filter(section => section.label === label);
 }
 
 /**
  * Calcule l'angle cible pour un secteur donné
  */
 function getTargetAngle(sector) {
-  // Trouver le secteur correspondant dans notre design de roue
-  const wheelSection = getSectorByLabel(sector.label);
+  // Trouver tous les secteurs correspondants dans notre design de roue
+  const matchingSections = getSectorsByLabel(sector.label);
   
-  if (!wheelSection) return 0;
+  if (!matchingSections || matchingSections.length === 0) return 0;
+  
+  // Choisir aléatoirement l'un des secteurs correspondants
+  const chosenSection = matchingSections[Math.floor(Math.random() * matchingSections.length)];
   
   // Calculer un angle aléatoire dans le secteur cible
-  const sectionSize = wheelSection.endAngle - wheelSection.startAngle;
-  const randomOffset = Math.random() * sectionSize * 0.8;
+  const sectionSize = chosenSection.endAngle - chosenSection.startAngle;
+  const randomOffset = Math.random() * sectionSize * 0.8 + sectionSize * 0.1; // Éviter les bords
   
   // L'angle cible est l'angle de départ + un décalage
-  return wheelSection.startAngle + randomOffset;
+  return chosenSection.startAngle + randomOffset;
 }
 
 /**
@@ -218,16 +218,21 @@ function rotate() {
  * Crée le canvas pour les confettis
  */
 function createConfettiCanvas() {
-  const confettiCanvas = document.createElement('canvas');
-  confettiCanvas.id = 'confetti-canvas';
-  confettiCanvas.style.position = 'fixed';
-  confettiCanvas.style.top = '0';
-  confettiCanvas.style.left = '0';
-  confettiCanvas.style.width = '100%';
-  confettiCanvas.style.height = '100%';
-  confettiCanvas.style.pointerEvents = 'none';
-  confettiCanvas.style.zIndex = '100';
-  document.body.appendChild(confettiCanvas);
+  // Vérifier si un canvas existe déjà
+  let confettiCanvas = document.getElementById('confetti-canvas');
+  
+  if (!confettiCanvas) {
+    confettiCanvas = document.createElement('canvas');
+    confettiCanvas.id = 'confetti-canvas';
+    confettiCanvas.style.position = 'fixed';
+    confettiCanvas.style.top = '0';
+    confettiCanvas.style.left = '0';
+    confettiCanvas.style.width = '100%';
+    confettiCanvas.style.height = '100%';
+    confettiCanvas.style.pointerEvents = 'none';
+    confettiCanvas.style.zIndex = '100';
+    document.body.appendChild(confettiCanvas);
+  }
   
   confettiCanvas.width = window.innerWidth;
   confettiCanvas.height = window.innerHeight;
@@ -302,7 +307,9 @@ function updateConfetti(confettiCanvas) {
   
   if (confetti.length === 0) {
     confettiActive = false;
-    document.body.removeChild(confettiCanvas);
+    if (document.body.contains(confettiCanvas)) {
+      document.body.removeChild(confettiCanvas);
+    }
     return;
   }
   
@@ -422,24 +429,25 @@ function handleSpin() {
   spinEl.textContent = "...";
   spinEl.style.opacity = "0.7";
   resultEl.textContent = "";
+
+  // Calcul de l'angle cible basé sur la probabilité réelle
+  const wheelSections = getWheelDesign();
+  const randomAngle = Math.random() * TAU;
+  const targetSection = wheelSections.find(s => 
+    randomAngle >= s.startAngle && 
+    randomAngle < s.endAngle
+  );
+
+  // Calcul de l'angle d'arrêt précis dans le secteur sélectionné
+  const sectionStart = targetSection.startAngle;
+  const sectionEnd = targetSection.endAngle;
+  const targetAngle = sectionStart + Math.random() * (sectionEnd - sectionStart);
+
+  // Paramètres de rotation
+  const rotations = 5 + Math.random() * 3;
+  const totalRotation = rotations * TAU + targetAngle;
   
-  // Sélectionner un secteur selon les probabilités
-  const chosenSector = pickSector();
-  
-  // Calculer l'angle cible et la vitesse de rotation
-  const targetAngle = getTargetAngle(chosenSector);
-  const rotations = 4 + Math.random() * 3; // Entre 4 et 7 rotations
-  const currentMod = ang % TAU;
-  let delta = (TAU - currentMod + targetAngle) % TAU;
-  
-  // S'assurer que la roue fait au moins un tour complet
-  if (delta < 0.1) delta += TAU;
-  
-  const finalAngle = rotations * TAU + delta;
-  
-  // Définir la vitesse angulaire en fonction du temps de rotation souhaité
-  const spinDuration = 5000 + Math.random() * 2000; // Entre 5 et 7 secondes
-  angVel = finalAngle / (spinDuration / 16.67); // 16.67ms est environ une frame à 60fps
+  angVel = (totalRotation - ang % TAU) / 5000 * 1000;
 }
 
 // Gérer le redimensionnement de la fenêtre pour le canvas de confettis

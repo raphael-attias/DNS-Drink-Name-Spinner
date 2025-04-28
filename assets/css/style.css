@@ -260,3 +260,41 @@ body {
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7), 0 0 10px rgba(255, 255, 255, 0.5);
   transition: all 0.3s ease;
 }
+
+#legend {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+
+#legend h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-family: 'Lato', sans-serif;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.color-box {
+  width: 25px;
+  height: 25px;
+  border-radius: 5px;
+  margin-right: 10px;
+  border: 2px solid #fff;
+}
+
+.label {
+  font-family: 'Lato', sans-serif;
+  font-weight: bold;
+  color: #333;
+  font-size: 16px;
+}
