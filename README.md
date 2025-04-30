@@ -8,6 +8,7 @@ Le projet a été conçu dans le cadre d’une animation pour dynamiser les mome
 
 N'hésite pas à tenter ta chance ici 😉
 https://raphael-attias.github.io/DNS-Drink-Name-Spinner/
+
 ---
 
 ## 📏 Règles d'utilisation
